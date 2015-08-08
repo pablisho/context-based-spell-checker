@@ -4,3 +4,4 @@ Makefile
 SpellChecker
 cmake_install.cmake
 *.o
+tags
