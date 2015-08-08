@@ -1,6 +1,7 @@
 #ifndef __PERCEPTRON_NEURON_H__
 #define __PERCEPTRON_NEURON_H__
 #include <vector>
+#include <random>
 
 class PerceptronNeuron {
 	public:
@@ -8,7 +9,7 @@ class PerceptronNeuron {
 		PerceptronNeuron(int inputNumber, double B);
 		virtual ~PerceptronNeuron();
 		double getOutput(std::vector<double>& input);
-		virtual void teach(std::vector<double>& input, double desiredOutput) = 0;
+		virtual std::vector<double> teach(std::vector<double>& input, double desiredOutput) = 0;
 	protected:
 		// Number of inputs
 		int inputNumber;
@@ -17,6 +18,9 @@ class PerceptronNeuron {
 		// Scale factor of tanh
 		double b;
 		// Learning factor, known as Nu
-		static const double LEARNING_FACTOR; 
+		static const double LEARNING_FACTOR;
+		 
+		std::default_random_engine generator;
+  		std::uniform_real_distribution<double> distribution;	
 };
 #endif

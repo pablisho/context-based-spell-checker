@@ -9,6 +9,6 @@ class HiddenNeuron : public PerceptronNeuron {
 		HiddenNeuron(int inputNumber);
 		HiddenNeuron(int inputNumber, double B);
 		virtual ~HiddenNeuron();
-		virtual void teach(std::vector<double>& input, double propagation);
+		virtual std::vector<double> teach(std::vector<double>& input, double propagation);
 };
 #endif

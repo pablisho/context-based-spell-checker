@@ -11,7 +11,8 @@ OutputNeuron::OutputNeuron(int inputNumber, double b) : PerceptronNeuron(inputNu
 OutputNeuron::~OutputNeuron(){
 }
 
-void OutputNeuron::teach(std::vector<double>& input, double desiredOutput){
+std::vector<double> OutputNeuron::teach(std::vector<double>& input, double desiredOutput){
+	std::vector<double> backpropagation;
 	if (input.size() != inputNumber){
 		std::cout << "ERROR teach: Cantidad de entradas distinta a cantidad de pesos" << std::endl;
 		throw "ERROR";
@@ -22,9 +23,18 @@ void OutputNeuron::teach(std::vector<double>& input, double desiredOutput){
 	// Actualizo pesos
 	for(int i=0; i<inputNumber;i++){
 		weights[i] += LEARNING_FACTOR*delta*input[i];
+		backpropagation.push_back(weights[i]*delta);
 	} 
 	weights[inputNumber] += LEARNING_FACTOR*delta;
-
+	#ifdef VERBOSE
+	std::cout << "DesiredOutput: "<< desiredOutput << "Actual Output: "<< actualOutput << " Backpropagation: ";
+	std::vector<double>::iterator it;
+	for (it = backpropagation.begin(); it != backpropagation.end(); it++){ 
+ 		std::cout << *it << ", ";
+	}
+	std::cout << std::endl; 
+	#endif
+	return backpropagation;
 }
 
 

@@ -11,7 +11,8 @@ HiddenNeuron::HiddenNeuron(int inputNumber, double b) : PerceptronNeuron(inputNu
 HiddenNeuron::~HiddenNeuron(){
 }
 
-void HiddenNeuron::teach(std::vector<double>& input, double propagation){
+std::vector<double> HiddenNeuron::teach(std::vector<double>& input, double propagation){
+	std::vector<double> back;
 	if (input.size() != inputNumber){
 		std::cout << "ERROR teach: Cantidad de entradas distinta a cantidad de pesos" << std::endl;
 		throw "ERROR";
@@ -22,9 +23,10 @@ void HiddenNeuron::teach(std::vector<double>& input, double propagation){
 	// Actualizo pesosº
 	for(int i=0; i<inputNumber;i++){
 		weights[i] += LEARNING_FACTOR*delta*input[i];
+		back.push_back(derivate*weights[i]);
 	} 
 	weights[inputNumber] += LEARNING_FACTOR*delta;
-
+	return back;
 }
 
 

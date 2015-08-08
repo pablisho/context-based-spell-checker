@@ -8,10 +8,10 @@ PerceptronLayer::PerceptronLayer(int neuronsNumber, int inputNumber, double B){
 }
 
 PerceptronLayer::~PerceptronLayer(){
-	std::vector<PerceptronNeuron*>::iterator it;
-	for(it=this->neurons.begin() ; it != this->neurons.end(); it++){
-		delete *it;
-	}
+//	std::vector<PerceptronNeuron*>::iterator it;
+//	for(it=this->neurons.begin() ; it != this->neurons.end(); it++){
+//		delete *it;
+//	}
 }
 
 std::vector<double> PerceptronLayer::getOutput(std::vector<double>& input){
@@ -31,7 +31,15 @@ void PerceptronLayer::teach(std::vector<double>& inputs, std::vector<double>& le
         std::vector<PerceptronNeuron*>::iterator it;
         std::vector<double>::iterator learnIt = learn.begin();
         for(it = this->neurons.begin(); it != this->neurons.end(); it++,learnIt++){
-                (*it)->teach(inputs,*learnIt);
+                #ifdef VERBOSE
+		std::cout << "Learn hidden: Inputs: ";
+		std::vector<double>::iterator inputIt;
+		for( inputIt = inputs.begin(); inputIt != inputs.end(); inputIt++){
+			std::cout << *inputIt <<", ";
+		}
+		std::cout << ". Learn:  " << *learnIt << std::endl;
+		#endif
+		(*it)->teach(inputs,*learnIt);
         }
 }
 

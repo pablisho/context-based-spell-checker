@@ -1,21 +1,22 @@
 #include "perceptronNeuron.h"
 #include <iostream>
 #include <cmath>
+#include <random>
 
-const double PerceptronNeuron::LEARNING_FACTOR = 1;
+const double PerceptronNeuron::LEARNING_FACTOR = 0.1;
 
-PerceptronNeuron::PerceptronNeuron(int inputNumber){
+PerceptronNeuron::PerceptronNeuron(int inputNumber) : distribution(-1.0,1.0){
 	this->inputNumber = inputNumber;
 	for (int i=0; i < inputNumber+1; i++){
-		weights.push_back(i);
+		weights.push_back(distribution(generator));
 	} 
 	this->b = 1;
 }
 
-PerceptronNeuron::PerceptronNeuron(int inputNumber, double b){
+PerceptronNeuron::PerceptronNeuron(int inputNumber, double b) : distribution(0.0,1.0){
 	this->inputNumber = inputNumber;
 	for (int i=0; i < inputNumber+1; i++){
-		weights.push_back(i);
+		weights.push_back(distribution(generator));
 	}
 	this->b = b;
 }

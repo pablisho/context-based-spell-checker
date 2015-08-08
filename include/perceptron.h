@@ -2,19 +2,18 @@
 #define __PERCEPTRON_H__
 
 #include "perceptronLayer.h"
-#include "outputLayer.h"
 #include "hiddenLayer.h"
+#include "outputNeuron.h"
 
 class Perceptron {
 	public:
-		Perceptron(int hiddenLayers,std::vector<int>& neurons, int inputs, double b);
+		Perceptron(int neurons, int inputs, double b);
 		virtual ~Perceptron();
 		double getOutput(std::vector<double>& input);
 		void teach(std::vector<double>& input, double desiredOutput);
 	private:
-		std::vector<HiddenLayer*> hiddenLayers;
-		OutputLayer outputLayer;
-		int numberOfHiddenLayers;
+		HiddenLayer hiddenLayer;
+		OutputNeuron outputNeuron;
 		int numberOfInputs;
 };
 
