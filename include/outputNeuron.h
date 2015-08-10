@@ -5,6 +5,7 @@
 #include <vector>
 #include "perceptronNeuron.h"
 
+
 class OutputNeuron : public PerceptronNeuron {
 	public:		
 		OutputNeuron(int inputNumber);

@@ -3,7 +3,7 @@
 #include <cmath>
 #include <random>
 
-const double PerceptronNeuron::LEARNING_FACTOR = 0.1;
+double PerceptronNeuron::LEARNING_FACTOR = 0.1;
 
 PerceptronNeuron::PerceptronNeuron(int inputNumber) : distribution(-1.0,1.0){
 	this->inputNumber = inputNumber;
@@ -35,4 +35,9 @@ double PerceptronNeuron::getOutput(std::vector<double>& input){
 	}
 	output += weights[inputNumber];
 	return tanh(b*output);
+}
+
+
+void PerceptronNeuron::setLearningFactor(double b){
+	LEARNING_FACTOR = b;
 }

@@ -7,6 +7,7 @@ class HiddenLayer : public PerceptronLayer {
 	public:
 		HiddenLayer(int neurons, int inputs, double b);
 		virtual ~HiddenLayer();
+		void setLearningFactor(double f);
 };
 
 #endif

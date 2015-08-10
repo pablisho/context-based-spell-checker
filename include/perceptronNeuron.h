@@ -10,6 +10,7 @@ class PerceptronNeuron {
 		virtual ~PerceptronNeuron();
 		double getOutput(std::vector<double>& input);
 		virtual std::vector<double> teach(std::vector<double>& input, double desiredOutput) = 0;
+		void setLearningFactor(double f);
 	protected:
 		// Number of inputs
 		int inputNumber;
@@ -18,7 +19,7 @@ class PerceptronNeuron {
 		// Scale factor of tanh
 		double b;
 		// Learning factor, known as Nu
-		static const double LEARNING_FACTOR;
+		static double LEARNING_FACTOR;
 		 
 		std::default_random_engine generator;
   		std::uniform_real_distribution<double> distribution;	

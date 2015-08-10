@@ -9,3 +9,10 @@ HiddenLayer::HiddenLayer(int neurons, int inputs, double b) : PerceptronLayer(ne
 
 HiddenLayer::~HiddenLayer(){
 }
+
+void HiddenLayer::setLearningFactor(double f){
+	std::vector<PerceptronNeuron*>::iterator it;
+	for(it = neurons.begin(); it != neurons.end(); it++){
+		(*it)->setLearningFactor(f);
+	}
+}
