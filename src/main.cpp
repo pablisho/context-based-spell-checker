@@ -5,17 +5,26 @@
 #include <string>
 #include <dirent.h>
 
-int computarError(Perceptron& p);
+int computarError(Perceptron& p, std::string& , std::string& ,std::string& , std::string&);
 
 int main(int argc, char* argv[]){
 	
+	std::string w1 = argv[1];
+	std::string w2 = argv[2];
+	std::string w1S = " ";
+	w1S += w1;
+	w1S += " ";
+	std::string w2S = " ";
+	w2S += w2;
+	w2S += " ";
+
 	Perceptron p(20,128,1);
 	std::ifstream file;
 	bool una = true;
 	for(int i=0; i< 1000;i++){
 		std::cout << i << std::endl;
 		if(i % 10 == 0){
-			if(!computarError(p)){
+			if(!computarError(p,w1,w1S,w2,w2S)){
 				break;
 			}
 		}
@@ -29,15 +38,13 @@ int main(int argc, char* argv[]){
 				file.open(name);
 				std::string line;
 				while (getline(file,line, '.')){
-					if (line.find(" se ") != std::string::npos){
+					if (line.find(w1S) != std::string::npos){
 						cant++;
-						std::string word = "se";
-						p.teach(line,-1,word);
+						p.teach(line,-1,w1);
 						una = false;
-					}else if(line.find(" sé ") != std::string::npos){
+					}else if(line.find(w2S) != std::string::npos){
 						cant++;
-						std::string word = "sé";
-						p.teach(line,1,word);
+						p.teach(line,1,w2);
 						una = true;
 					}
 				}
@@ -54,12 +61,12 @@ int main(int argc, char* argv[]){
 		}
 		//std::cout << "MUESTRAS: " << cant << std::endl;
 	}
-	computarError(p);
+	computarError(p,w1,w1S,w2,w2S);
 	return 0;
 }
 
 
-int computarError(Perceptron& p){
+int computarError(Perceptron& p, std::string& w1, std::string& w1S, std::string& w2, std::string& w2S){
 	std::ifstream file;
 	
 	double output;
@@ -76,20 +83,18 @@ int computarError(Perceptron& p){
 			file.open(name);
 			std::string line;
 			while (getline(file,line, '.')){
-				if (line.find(" se ") != std::string::npos){
+				if (line.find(w1S) != std::string::npos){
 					total++;
 					sin++;
-					std::string word = "se";
-					output = p.getOutput(line, word);
+					output = p.getOutput(line, w1);
 					if ( output > 0){
 						error++;
 					}
 					//std::cout << "QUE: "<< (output < 0 ? "OK" : "ERROR") << std::endl;
-				}else if(line.find(" sé ") != std::string::npos){
+				}else if(line.find(w2S) != std::string::npos){
 					total++;
 					con++;
-					std::string word = "sé";
-					output = p.getOutput(line, word);
+					output = p.getOutput(line, w2);
 					if (output < 0){
 						error++;
 					}
