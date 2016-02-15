@@ -1,30 +1,52 @@
-#include "perceptron.h"
+#include "spellChecker.h"
 #include <iostream>
 #include "outputNeuron.h"
 #include <fstream>
 #include <string>
 #include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <algorithm>
+#include <locale>
+#include <wctype.h>
+#include <queue>
 
-int computarError(Perceptron& p, std::string& , std::string& ,std::string& , std::string&);
+//using namespace std::string_literals;
+
+int computarError(SpellChecker& p, std::string&, std::string&);
+int is_regular_file(const char *path)
+{
+    struct stat path_stat;
+    stat(path, &path_stat);
+    return S_ISREG(path_stat.st_mode);
+}
+
+std::string processWord(std::string word){
+	std::string result;
+        std::remove_copy_if(word.begin(), word.end(),
+		std::back_inserter(result), //Store output           
+        	std::ptr_fun<int, int>(&std::ispunct));
+        std::transform(result.begin(), result.end(), result.begin(),::tolower);
+	return result;
+}
 
 int main(int argc, char* argv[]){
 	
+	std::vector<std::string> words;
+	int k = 3;
+
 	std::string w1 = argv[1];
 	std::string w2 = argv[2];
-	std::string w1S = " ";
-	w1S += w1;
-	w1S += " ";
-	std::string w2S = " ";
-	w2S += w2;
-	w2S += " ";
 
-	Perceptron p(20,128,1);
+	int cantCon = 0;
+	int cantSin = 0;
+	SpellChecker spellChecker(w1,w2);
 	std::ifstream file;
-	bool una = true;
-	for(int i=0; i< 1000;i++){
+	for(int i=0; i< 100;i++){
 		std::cout << i << std::endl;
 		if(i % 10 == 0){
-			if(!computarError(p,w1,w1S,w2,w2S)){
+			if(!computarError(spellChecker,w1,w2)){
 				break;
 			}
 		}
@@ -32,23 +54,31 @@ int main(int argc, char* argv[]){
 		DIR *dir;
 		struct dirent *ent;
 		if ((dir = opendir ("./cuentos")) != NULL) {
-  			while ((ent = readdir (dir)) != NULL) {
+			while ((ent = readdir (dir)) != NULL) {
 				std::string name = "./cuentos/";
 				name += ent->d_name;
-				file.open(name);
-				std::string line;
-				while (getline(file,line, '.')){
-					if (line.find(w1S) != std::string::npos){
-						cant++;
-						p.teach(line,-1,w1);
-						una = false;
-					}else if(line.find(w2S) != std::string::npos){
-						cant++;
-						p.teach(line,1,w2);
-						una = true;
+				if(is_regular_file(name.c_str())){
+					file.open(name);
+					std::string word;
+					while(file >> word){
+						std::string result = processWord(word);
+						//std::cout << result << std::endl;
+						if(result.length() > 0){
+							words.push_back(result);
+							if(words.size() > 2*k+1){
+								words.erase(words.begin());
+							}
+							if(std::find(words.begin(), words.end(), w1) - words.begin() == k){
+								words.erase(std::remove(words.begin(), words.end(), w1), words.end());
+								spellChecker.teach(words,w1);				
+							}else if(std::find(words.begin(), words.end(), w2) - words.begin() == k){	
+								words.erase(std::remove(words.begin(), words.end(), w2), words.end());
+								spellChecker.teach(words,w2);
+							}
+						}
 					}
+					file.close();
 				}
-				file.close();
   			}
   			closedir (dir);
 		} else {
@@ -56,52 +86,68 @@ int main(int argc, char* argv[]){
   			perror ("");
   			return EXIT_FAILURE;
 		}
-		if(i == 50){
-			p.setLearningFactor(0.01);
-		}
 		//std::cout << "MUESTRAS: " << cant << std::endl;
 	}
-	computarError(p,w1,w1S,w2,w2S);
+	computarError(spellChecker,w1,w2);
 	return 0;
 }
 
 
-int computarError(Perceptron& p, std::string& w1, std::string& w1S, std::string& w2, std::string& w2S){
+int computarError(SpellChecker& spellChecker, std::string& w1, std::string& w2){
 	std::ifstream file;
 	
-	double output;
+	std::string output;
 	int total = 0;
 	int con = 0;
 	int sin = 0;
 	int error = 0;
+	int errorCon = 0;
+	int errorSin = 0;
 	DIR *dir;
 	struct dirent *ent;
+	int files = 0;
+	
+	int k = 3;
+	std::vector<std::string> words;
+
 	if ((dir = opendir ("./cuentos")) != NULL) {
 		while ((ent = readdir (dir)) != NULL) {
 			std::string name = "./cuentos/";
 			name += ent->d_name;
-			file.open(name);
-			std::string line;
-			while (getline(file,line, '.')){
-				if (line.find(w1S) != std::string::npos){
-					total++;
-					sin++;
-					output = p.getOutput(line, w1);
-					if ( output > 0){
-						error++;
-					}
-					//std::cout << "QUE: "<< (output < 0 ? "OK" : "ERROR") << std::endl;
-				}else if(line.find(w2S) != std::string::npos){
-					total++;
-					con++;
-					output = p.getOutput(line, w2);
-					if (output < 0){
-						error++;
-					}
-					//std::cout << "QUÉ: "<< (output > 0 ? "OK" : "ERROR") << std::endl;
-				}
-			}
-			file.close();
+			if(is_regular_file(name.c_str())){
+				files++;
+                        	file.open(name);
+                                std::string word;
+                                while(file >> word){
+                                	std::string result = processWord(word);
+                                        if(result.length() > 0){
+                                        	words.push_back(result);
+                                                if(words.size() > 2*k+1){
+                                                	words.erase(words.begin());
+                                                }
+                                                if(std::find(words.begin(), words.end(), w1) - words.begin() == k){
+                                                	words.erase(std::remove(words.begin(), words.end(), w1), words.end());
+                                                        total++;
+							sin++;
+							output = spellChecker.getOutput(words);
+							if(output != w1){
+								error++;
+								errorSin++;
+							}
+                                                }else if(std::find(words.begin(), words.end(), w2) - words.begin() == k){
+                                                        words.erase(std::remove(words.begin(), words.end(), w2), words.end());
+                                                        total++;
+							con++;
+							output = spellChecker.getOutput(words);
+							if(output != w2){
+								error++;
+								errorCon++;
+							}
+                                                }
+                                        }
+                                }
+                                file.close();
+                        }
   		}
   		closedir (dir);
 	} else {
@@ -110,6 +156,8 @@ int computarError(Perceptron& p, std::string& w1, std::string& w1S, std::string&
   		throw "ERROR";
 	}
 	double porc = (double)error* (double) 100 / (double)total;
-	std::cout <<"TOTAL: " << total << " CON: " << con << "SIN: "<< sin << " ERRORES: " << error << " ERROR PORCENTUAL: " << porc << std::endl; 
+	std::cout << "ARCHIVOS: "<<files  <<" TOTAL: " << total << " SIN: " << sin << " CON: "<< con << " ERRORES: " << error <<  " ERROR SIN: "<< errorSin << " ERROR CON: " << errorCon
+				<<" ERROR PORCENTUAL: " << porc << std::endl; 
 	return error;
 }
+
