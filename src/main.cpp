@@ -34,7 +34,7 @@ std::string processWord(std::string word){
 int main(int argc, char* argv[]){
 	
 	std::vector<std::string> words;
-	int k = 3;
+	int k = 5;
 
 	std::string w1 = argv[1];
 	std::string w2 = argv[2];

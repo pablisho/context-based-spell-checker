@@ -9,7 +9,7 @@
 
 
 SpellChecker::SpellChecker(std::string word1, std::string word2) :
-	word1(word1), word2(word2), winnow(1.5,0.5) {
+	word1(word1), word2(word2), winnow(2,0.5) {
 }
 
 SpellChecker::~SpellChecker(){
