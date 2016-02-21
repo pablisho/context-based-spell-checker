@@ -4,8 +4,7 @@
 
 Se debe contar con cmake. 
 Situarse en la raíz y ejecutar:
-`cmake
-make`
+`cmake .` y a continuación `make`
 
 ## Ejecución
 
