@@ -34,17 +34,18 @@ std::string processWord(std::string word){
 int main(int argc, char* argv[]){
 	
 	std::vector<std::string> words;
-	int k = 5;
+	int k = 3;
 
 	std::string w1 = argv[1];
 	std::string w2 = argv[2];
 
 	int cantCon = 0;
 	int cantSin = 0;
-	SpellChecker spellChecker(w1,w2);
+	SpellChecker spellChecker(w1,w2,10);
 	std::ifstream file;
-	for(int i=0; i< 100;i++){
-		std::cout << i << std::endl;
+	for(int i=0; i< 50;i++){
+		std::cout << i <<", ";
+ 		std::cout.flush();
 		if(i % 10 == 0){
 			if(!computarError(spellChecker,w1,w2)){
 				break;
@@ -62,7 +63,6 @@ int main(int argc, char* argv[]){
 					std::string word;
 					while(file >> word){
 						std::string result = processWord(word);
-						//std::cout << result << std::endl;
 						if(result.length() > 0){
 							words.push_back(result);
 							if(words.size() > 2*k+1){
@@ -156,8 +156,8 @@ int computarError(SpellChecker& spellChecker, std::string& w1, std::string& w2){
   		throw "ERROR";
 	}
 	double porc = (double)error* (double) 100 / (double)total;
-	std::cout << "ARCHIVOS: "<<files  <<" TOTAL: " << total << " SIN: " << sin << " CON: "<< con << " ERRORES: " << error <<  " ERROR SIN: "<< errorSin << " ERROR CON: " << errorCon
-				<<" ERROR PORCENTUAL: " << porc << std::endl; 
+	std::cout << "Archivos procesados: "<<files  <<" Ocurrencias Totales: " << total << "Palabra1: " << sin << " Palabra2: "<< con << " Errores totales: " << error <<  " Errores Palabra1: "<< errorSin << " Errores Palabra2: " << errorCon
+				<<" Error Porcentual: " << porc << std::endl; 
 	return error;
 }
 

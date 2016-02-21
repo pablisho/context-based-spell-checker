@@ -17,9 +17,9 @@ double Winnow::getOutput(std::vector<std::string>& input){
         for(it=input.begin(); it!=input.end(); it++){
 		double ventana = 1;
 		if(i <=5){
-		  ventana=(double)(i+1)/5;
+		  ventana=(double)(i+1)/3;
 		}else{
-		  ventana =(double)(10-i)/5;
+		  ventana =(double)(10-i)/3;
 		}
  		if(weights.find(*it) != weights.end()){
 			result += weights[*it]*ventana;
@@ -32,7 +32,7 @@ double Winnow::getOutput(std::vector<std::string>& input){
 	if(result > 500){
 		return 1;
 	} else {
-		return 0;
+		return -1;
 	}
 }
 
